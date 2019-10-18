@@ -6,14 +6,26 @@ import {Passenger} from "../../models/passanger.interface";
   styleUrls: ['passenger-dashboard.component.scss'],
   template: `
       <div>
-          <passenger-count [items]="passengers"></passenger-count>
-          <passenger-detail [items]="passengers"></passenger-detail>
+          <passenger-count
+                  [items]="passengers">
+          </passenger-count>
+          <passenger-detail
+                  *ngFor="let passenger of passengers"
+                  [detail]="passenger"
+                  (remove)="onRemove($event)"                              
+                  (edit)="onEdit($event)"                              
+          >
+          </passenger-detail>
       </div>
   `
+
 })
-export class PassengerDashboardComponent implements OnInit{
+export class PassengerDashboardComponent implements OnInit {
   passengers: Passenger[];
-  constructor(){};
+
+  constructor() {
+  };
+
   ngOnInit(): void {
     console.log("OnInit")
     this.passengers =
@@ -43,6 +55,14 @@ export class PassengerDashboardComponent implements OnInit{
   }
 
 
+  onRemove(event: Passenger) {
+    this.passengers = this.passengers.filter(
+      (passenger) => passenger !== event
+    )
+  }
 
-
+  onEdit(event: Passenger) {
+    var editedPassengers = this.passengers.filter((p) => p.id !== event.id)
+    this.passengers = editedPassengers.concat(event);
+  }
 }

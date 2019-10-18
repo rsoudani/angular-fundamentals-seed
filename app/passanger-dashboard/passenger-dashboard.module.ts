@@ -7,6 +7,7 @@ import {PassengerDashboardComponent} from "./containers/passanger-dashboard/pass
 //Components
 import {PassengerCountComponent} from "./components/passenger-count/passenger-count.component";
 import {PassengerDetailComponent} from "./components/passenger-detail/passenger-detail.component";
+import {FormsModule} from "@angular/forms";
 
 
 @NgModule({
@@ -20,6 +21,7 @@ import {PassengerDetailComponent} from "./components/passenger-detail/passenger-
   ],
   imports: [
     CommonModule,
+    FormsModule,
   ]
 
 })
