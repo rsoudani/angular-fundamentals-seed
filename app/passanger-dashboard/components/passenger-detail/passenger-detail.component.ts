@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter} from "@angular/core";
+import {Component, Input, OnChanges, Output, EventEmitter} from "@angular/core";
 import {Passenger} from "../../models/passanger.interface";
 
 @Component({
@@ -13,8 +13,6 @@ import {Passenger} from "../../models/passanger.interface";
                       type="text"
                       [value]="detail.name"
                       (input)="onNameChange(name.value)"
-                      (blur)="disableEdit()"
-                      (keydown.enter)="disableEdit()"
                       #name
               >
           </div>
@@ -25,7 +23,7 @@ import {Passenger} from "../../models/passanger.interface";
               Children: {{ detail.children?.length || 0}}
           </div>
 
-          <button (click)="enableEdit()">
+          <button (click)="toggleEdit()">
               {{editing ? "Save" : "Edit" }}
           </button>
           <button (click)="onRemove()">
@@ -34,13 +32,13 @@ import {Passenger} from "../../models/passanger.interface";
       </div>
   `
 })
-export class PassengerDetailComponent {
+export class PassengerDetailComponent implements OnChanges{
   @Input()
   detail: Passenger;
 
   editing: boolean = false;
 
-  @Output
+  @Output()
   edit: EventEmitter<Passenger> = new EventEmitter<Passenger>();
 
   @Output()
@@ -49,19 +47,25 @@ export class PassengerDetailComponent {
   constructor() {
   }
 
+  ngOnChanges(change){
+    this.detail = Object.assign({}, change.detail.currentValue)
+  }
+
+
+
   onNameChange(value: string) {
-    this.detail.name = value;
+    this.detail.name = value
   }
 
-  enableEdit() {
+  toggleEdit() {
+    if (this.editing){
+      this.edit.emit(this.detail);
+    }
     this.editing = !this.editing;
-  }
-
-  disableEdit() {
-    this.editing = false;
   }
 
   onRemove() {
     this.remove.emit(this.detail);
   }
+
 }

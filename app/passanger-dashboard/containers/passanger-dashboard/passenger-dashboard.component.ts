@@ -1,5 +1,6 @@
 import {Component, OnInit} from "@angular/core";
 import {Passenger} from "../../models/passanger.interface";
+import {PassengerDashboardService} from "../../passenger-dashboard.service";
 
 @Component({
   selector: 'passenger-dashboard',
@@ -9,11 +10,14 @@ import {Passenger} from "../../models/passanger.interface";
           <passenger-count
                   [items]="passengers">
           </passenger-count>
+          <div *ngFor="let passenger of passengers">
+              {{passenger.name}}
+          </div>
           <passenger-detail
                   *ngFor="let passenger of passengers"
                   [detail]="passenger"
-                  (remove)="onRemove($event)"                              
-                  (edit)="onEdit($event)"                              
+                  (remove)="onRemove($event)"
+                  (edit)="handleEdit($event)"
           >
           </passenger-detail>
       </div>
@@ -23,46 +27,42 @@ import {Passenger} from "../../models/passanger.interface";
 export class PassengerDashboardComponent implements OnInit {
   passengers: Passenger[];
 
-  constructor() {
+  constructor(private passengerDashboardService: PassengerDashboardService) {
   };
 
   ngOnInit(): void {
     console.log("OnInit")
-    this.passengers =
-      [{
-        id: 1, name: "aaa", checkedIn: false,
-        children: null
-      }, {
-        id: 2, name: "Dom", checkedIn: true,
-        children: null
-      }, {
-        id: 3, name: "Mikolaj", checkedIn: true,
-        children: [
-          {name: 'ted', age: 12},
-          {name: 'Max', age: 11}
-        ]
-      }, {
-        id: 4, name: "Stephen", checkedIn: false
-      }, {
-        id: 5, name: "James", checkedIn: false,
-        children: [
-          {name: 'Jessica', age: 8}
-        ]
-      }, {
-        id: 6, name: "Rose", checkedIn: true
-      }
-      ];
+    this.passengerDashboardService
+      .getPassengers()
+      .subscribe( (data: Passenger[]) => this.passengers = data);
+
   }
 
 
   onRemove(event: Passenger) {
-    this.passengers = this.passengers.filter(
-      (passenger) => passenger !== event
-    )
+    this.passengerDashboardService
+      .deletePassenger(event)
+      .subscribe(
+        ( passenger: Passenger) => {
+          this.passengers = this.passengers.filter(
+            (passenger: Passenger) => passenger.id !== event.id
+          )
+        }
+      )
+
   }
 
-  onEdit(event: Passenger) {
-    var editedPassengers = this.passengers.filter((p) => p.id !== event.id)
-    this.passengers = editedPassengers.concat(event);
+  handleEdit(event: Passenger) {
+    this.passengerDashboardService.updatePassenger(event)
+      .subscribe( (data : Passenger) => {
+        this.passengers = this.passengers.map((passenger: Passenger) => {
+          if(passenger.id === event.id){
+            passenger = Object.assign({}, passenger, event)
+          }
+          return passenger;
+        });
+      });
+
+    console.log(this.passengers);
   }
 }
