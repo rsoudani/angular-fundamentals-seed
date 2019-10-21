@@ -10,6 +10,7 @@ import {PassengerViewerComponent} from "./containers/passenger-viewer/passenger-
 //Components
 import {PassengerCountComponent} from "./components/passenger-count/passenger-count.component";
 import {PassengerDetailComponent} from "./components/passenger-detail/passenger-detail.component";
+import {PassengerFormComponent} from "./components/passenger-form/passenger-form.component";
 
 //service
 import {PassengerDashboardService} from "./passenger-dashboard.service";
@@ -20,7 +21,8 @@ import {PassengerDashboardService} from "./passenger-dashboard.service";
     PassengerDashboardComponent,
     PassengerViewerComponent,
     PassengerCountComponent,
-    PassengerDetailComponent
+    PassengerDetailComponent,
+    PassengerFormComponent
   ],
   exports: [
     PassengerViewerComponent,
